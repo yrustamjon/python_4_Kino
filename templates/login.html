@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container text-center  " style="max-width: 400px" >
+    <h1 class='mt-5 '>Login to CineMax</h1>
+
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="form-floating mb-3">
+            <input type="username" class="form-control" id="floatingInput" name="username" placeholder=""" required>
+            <label for="floatingInput">Username</label>
+        </div>
+
+        <!-- Font Awesome ulash -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+        <div class="form-floating mb-3 position-relative">
+            <input type="password" class="form-control pe-5" id="floatingPassword" name="password" placeholder="Password" required>
+            <label for="floatingPassword">Password</label>
+
+            <!-- Eye icon (password toggle) -->
+            <i class="fa-solid fa-eye-slash position-absolute" id="togglePassword"
+            style="top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer;"></i>
+        </div>
+        
+        <script>
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#floatingPassword');
+
+            togglePassword.addEventListener('click', function () {
+                // Toggle password visibility
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+
+                // Toggle icon
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+        </script>
+
+        <div class="d-flex mb-3" style="max-width: 400px">
+            <input class="ms-2 form-check-input me-2" type="checkbox" value="" id="rememberMe">
+            <label class="form-check-label me-5 " for="rememberMe">Remember for 30 days  </label>
+            <a class="d-flex justify-content-end" href='#' >Forgot password</a>
+        </div>
+
+        <div class="form-floating mb-3">
+            <button type="submit" class="btn btn-outline-primary me-2" style="width: 100px">Login</button>
+        </div>
+
+        <div  style="position: right" class='mb-3'> 
+            Don't have an account? <a href="#">Register</a>
+        </div>
+    </form>
+</div>
+{% endblock content %}

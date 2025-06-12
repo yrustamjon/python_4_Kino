@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Sahifa Sarlavhasi -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <nav aria-label="nonushta menyusi">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Bosh Sahifa</a></li>
+                <li class="breadcrumb-item"><a href="movies.html">Filmlar</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{movie.title}}</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<!-- Film Tafsilotlari Bo'limi -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Film Posteri -->
+            <div class="col-md-4 mb-4 mb-md-0">
+                <img src="{{movie.poster.url}}" class="img-fluid single-movie-poster rounded shadow" alt="{{movie.title}} posteri">
+            </div>
+            
+            <!-- Film Ma'lumotlari -->
+            <div class="col-md-8">
+                <h1 class="fw-bold mb-3">{{movie.title}}</h1>
+                
+                <!-- Reyting va Boshqa Ma'lumotlar -->
+                <div class="d-flex flex-wrap align-items-center mb-3">
+                    <span class="rating fs-4 me-3">
+                        <i class="fas fa-star text-warning"></i> {{rating}}/10
+                    </span>
+                    <span class="me-3"><i class="far fa-calendar-alt me-1"></i> {{movie.release_date|date:"Y"}}</span>
+                    <span class="me-3"><i class="far fa-clock me-1"></i> {{movie.duration}}</span>
+                    <span><i class="far fa-eye me-1"></i> {{view}} ko'rish</span>
+                </div>
+                
+                <!-- Janrlar -->
+                <div class="mb-4">
+                    {% for genre in movie.genres.all %}
+                    <span class="badge bg-primary genre-badge me-2 mb-2">{{genre.name}}</span>
+                    {% endfor %}
+                </div>
+                
+                <!-- Film Tavsifi -->
+                <div class="mb-4">
+                    <h3 class="mb-3">Film Tavsifi</h3>
+                    <p class="lead">{{movie.description}}</p>
+                </div>
+                
+                <!-- Qo'shimcha Ma'lumotlar -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <h5><i class="fas fa-user-tie me-2"></i> Rejissyor</h5>
+                        <p>{{movie.director}}</p>
+                        
+                        <h5><i class="fas fa-pen me-2"></i> Ssenariy Mualliflari</h5>
+                        <p>{{movie.writers|default:"Ma'lumot yo'q"}}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h5><i class="fas fa-calendar-day me-2"></i> Chiqish Sanasi</h5>
+                        <p>{{movie.release_date|date:"F j, Y"}}</p>
+                        
+                        <h5><i class="fas fa-money-bill-wave me-2"></i> Byudjet</h5>
+                        <p>{{movie.budget|default:"Ma'lumot yo'q"}}</p>
+                    </div>
+                </div>
+                
+                <!-- Harakatlar -->
+                <div class="mt-4">
+                    <a href="#" class="btn btn-primary me-2">
+                        <i class="fas fa-ticket-alt me-1"></i> Chipta Sotib Olish
+                    </a>
+                    <a href="#" class="btn btn-outline-secondary">
+                        <i class="fas fa-bookmark me-1"></i> Saqlash
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Treyler Bo'limi -->
+        {% if movie.trailer_set.all.0.youtube_url %}
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="mb-4">Treyler</h3>
+                <div class="trailer-container rounded shadow">
+                    <iframe src="{{movie.trailer_set.all.0.youtube_url}}" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Filmni Ko'rish Bo'limi -->
+        {% if movie.video %}
+        <div class="row mt-5 justify-content-center">
+            <div class="col-12">
+                <h3 class="mb-4">Filmni Ko'rish</h3>
+            </div>
+            <div>
+                <div class="responsive-video-container">
+                    <video class="responsive-video-player" playsinline controls="advanced">
+                        <source src="{{ movie.video.url }}" >
+                    </video>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Aktyorlar Bo'limi -->
+        {% if movie.cast.all %}
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="mb-4">Aktyorlar</h3>
+                <div class="row">
+                    {% for cast in movie.cast.all %}
+                    <div class="col-6 col-md-3 col-lg-2 mb-4">
+                        <div class="cast-member text-center">
+                            <img src="{{cast.picture.url}}" class="img-fluid rounded-circle mb-2 border border-3 border-primary" 
+                                 alt="{{cast.name}}" style="width: 100px; height: 100px; object-fit: cover;">
+                            <h6 class="mb-0">{{cast.name}}</h6>
+                            <small class="text-muted">{{cast.character_name|default:"Aktyor"}}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Fikrlar Bo'limi -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="mb-4">Foydalanuvchilar Fikrlari</h3>
+
+                {% if reviews|length > 3 %}
+                <div class="review-scroll-container">
+                {% endif %}
+
+                {% for review in reviews %}
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="card-title mb-0">{{ review.name }}</h5>
+                            <small class="text-muted">{{ review.created_at|date:"d F, Y" }}</small>
+                        </div>
+
+                        <div class="mb-2">
+                            {% for i in "12345678910"|make_list %}
+                                {% if forloop.counter <= review.rating %}
+                                    <i class="fas fa-star text-warning"></i>
+                                {% else %}
+                                    <i class="far fa-star text-muted"></i>
+                                {% endif %}
+                            {% endfor %}
+                            <span class="ms-2">{{ review.rating }}/10</span>
+                        </div>
+
+                        <p class="card-text">{{ review.comment }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="alert alert-info">Hozircha fikrlar mavjud emas. Birinchi bo'lib fikringizni qoldiring!</div>
+                {% endfor %}
+
+                {% if reviews|length > 3 %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Fikr Qoldirish Bo'limi -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="mb-4">Fikr Qoldiring</h3>
+                <form method="post" action="{% url 'add_review' movie.id %}" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">Ismingiz</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                            <div class="invalid-feedback">
+                                Iltimos, ismingizni kiriting.
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email Manzilingiz</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                            <div class="invalid-feedback">
+                                Iltimos, to'g'ri email manzil kiriting.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">Baholang</label>
+                        <select class="form-select" id="rating" name="rating" required>
+                            <option value="" selected disabled>Bahoni tanlang...</option>
+                            {% for i in "12345678910"|make_list %}
+                                <option value="{{ i }}">{{ i }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">
+                            Iltimos, filmni baholang.
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comment" class="form-label">Fikringiz</label>
+                        <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
+                        <div class="invalid-feedback">
+                            Iltimos, fikringizni yozing.
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane me-1"></i> Yuborish
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- O'xshash Filmlar Bo'limi -->
+        {% if similar_movies %}
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="mb-4">O'xshash Filmlar</h3>
+                <div class="row">
+                    {% for similar in similar_movies %}
+                    <div class="col-6 col-md-4 col-lg-3 mb-4">
+                        <div class="card movie-card h-100">
+                            <img src="{{similar.poster.url}}" class="card-img-top movie-poster" alt="{{similar.title}} posteri">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{similar.title}}</h5>
+                                <div class="mb-2">
+                                    <span class="rating"><i class="fas fa-star text-warning"></i> {{similar.avg_rating|default:"0"}}</span>
+                                </div>
+                                <a href="{% url 'movie_detail' similar.id %}" class="btn btn-sm btn-primary mt-auto">Batafsil</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    .responsive-video-container {
+        position: relative;
+        width: 100%;
+        max-width: 1300px;
+        padding-bottom: 56.25%; /* 16:9 nisbati */
+        margin: 0 auto;
+        background-color: #000;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .responsive-video-player {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+</style>
+
+<script>
+    function adjustVideoSize() {
+        const videoWrappers = document.querySelectorAll('.video-wrapper');
+        
+        videoWrappers.forEach(wrapper => {
+            const width = wrapper.clientWidth;
+            wrapper.style.height = (width * 9 / 16) + 'px';
+        });
+    }
+    
+    // Dastlabki sozlash
+    window.addEventListener('load', adjustVideoSize);
+    // Oynani o'lchami o'zgarganda
+    window.addEventListener('resize', adjustVideoSize);
+</script>
+
+{% endblock %}
