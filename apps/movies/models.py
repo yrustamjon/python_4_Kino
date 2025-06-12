@@ -36,7 +36,7 @@ class Movie(BaseModel):
 
 class Trailer(BaseModel):
     title = models.CharField(max_length=500)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, blank=True, null=True)
     youtube_url = models.URLField(max_length=500, blank=True, null=True)
 
     def __str__(self):
@@ -54,7 +54,7 @@ class Review(BaseModel):
         return f"{self.movie} - {self.rating}"
 
 class View(BaseModel):
-    movie=models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='view_set')  
+    movie=models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='view_set', blank=True, null=True)  
     address=models.GenericIPAddressField(blank=True, null=True)
     def __str__(self):
         return f"{self.movie} - {self.created_at.strftime('%Y-%m-%d %H:%M:%S')}"
